@@ -1,0 +1,71 @@
+STOKIO — OUVRIR L’INVENTAIRE TÉLÉCHARGÉ
+======================================
+
+1. LA MÉTHODE LA PLUS SIMPLE (sans installation)
+
+   Si le téléchargement est un ZIP, décompressez-le complètement.
+   Dans le dossier public, ouvrez dashboard-autonome.html par double-clic.
+   Vous pouvez aussi choisir « Ouvrir avec » > Chrome, Edge ou Firefox.
+
+   Ce fichier contient la page, la mise en forme, les polices, les icônes
+   et les scripts. Il fonctionne tout seul, même sans Internet.
+   Aucun serveur, Node.js ou PostgreSQL n’est nécessaire pour cette version.
+
+   Depuis le site en ligne, le bouton « Télécharger la version hors ligne »
+   fournit le même format, avec une copie de votre inventaire actuel.
+   Le fichier autonome inclus dans le projet démarre avec les références Excel.
+
+2. VERSION AVEC FICHIERS SÉPARÉS (pour modifier les couleurs et les textes)
+
+   Ouvrez public/dashboard.html, mais conservez tout le dossier public :
+   - dashboard.html
+   - styles.css
+   - config.js
+   - local-inventory.js
+   - app.js
+   - fonts/ (polices locales et licences)
+
+   Tous les chemins sont relatifs, donc la mise en forme se charge aussi
+   par double-clic. Ne déplacez pas uniquement dashboard.html hors du dossier.
+   N’ouvrez pas le fichier directement à l’intérieur d’une archive ZIP.
+   Si vous ne voulez garder qu’un seul fichier, utilisez dashboard-autonome.html.
+
+   Pour modifier le nom de l’entreprise, les couleurs ou les libellés,
+   éditez config.js, enregistrez puis actualisez dashboard.html.
+   Pour modifier la présentation, éditez styles.css.
+   La version autonome est régénérée pendant la préparation/compilation
+   du projet (npx next typegen ou npm run build, dépendances installées).
+
+3. OÙ SONT ENREGISTRÉES LES MODIFICATIONS ?
+
+   Par double-clic : dans le stockage local du navigateur, pour ce fichier.
+   Les produits, entrées et sorties restent présents après actualisation.
+   Le bandeau « Version locale · sans serveur » indique clairement ce mode.
+   Les modifications ne réécrivent PAS le fichier HTML sur votre disque.
+
+   ATTENTION : changer de navigateur, de profil, de nom ou d’emplacement
+   du fichier, effacer les données du navigateur ou utiliser la navigation
+   privée peut empêcher de retrouver votre inventaire. Certains navigateurs
+   peuvent aussi bloquer le stockage des fichiers locaux : le site l’indique
+   alors, et ne prétend pas avoir enregistré les modifications.
+
+   Utilisez régulièrement « Sauvegarder » pour télécharger un fichier JSON.
+   Conservez ce fichier dans un emplacement sûr, distinct du navigateur.
+   Pour retrouver l’inventaire sur un autre ordinateur, ouvrez le HTML,
+   cliquez sur « Restaurer », puis choisissez votre sauvegarde JSON.
+   La restauration remplace l’inventaire local après confirmation.
+   Le CSV sert à consulter les données dans Excel, pas à les restaurer.
+
+4. DIFFÉRENCE AVEC LE SITE EN LIGNE
+
+   Le site hébergé conserve les données dans PostgreSQL.
+   La version locale conserve ses propres données dans le navigateur.
+   Les modifications locales ne sont PAS synchronisées avec le serveur.
+   Une panne du serveur ne bascule jamais silencieusement en mode local.
+
+5. SI LA PAGE EST ENCORE SANS MISE EN FORME
+
+   Retéléchargez la version corrigée et décompressez le dossier.
+   Ouvrez dashboard-autonome.html dans un navigateur récent.
+   N’ouvrez pas une ancienne copie de dashboard.html isolée de ses fichiers.
+   Activez JavaScript pour utiliser les commandes de l’inventaire.

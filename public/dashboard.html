@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gestion d'inventaire</title>
+<!-- Chemin relatif : fonctionne aussi en ouvrant ce fichier par double-clic. -->
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+<!-- ======================= BANQUE D'ICÔNES ============================= -->
+<svg class="sprite" width="0" height="0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 7.5l9-4 9 4v9l-9 4-9-4z"/><path d="M3 7.5l9 4 9-4M12 11.5v9"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3" y="3" width="7.5" height="9" rx="1.5"/><rect x="13.5" y="3" width="7.5" height="5.5" rx="1.5"/><rect x="13.5" y="11.5" width="7.5" height="9.5" rx="1.5"/><rect x="3" y="15.5" width="7.5" height="5.5" rx="1.5"/></symbol>
+  <symbol id="i-activity" viewBox="0 0 24 24"><path d="M3 12h4l3 7 4-15 3 8h4"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V11M10 20V4M16 20v-6M3 20h18"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h5"/></symbol>
+  <symbol id="i-in" viewBox="0 0 24 24"><path d="M17 7L7 17M7 9.5V17h7.5"/></symbol>
+  <symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17L17 7M9.5 7H17v7.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><path d="M4 20h4L19.5 8.5l-4-4L4 16z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16.5V11a6 6 0 1112 0v5.5l1.5 1.5h-15zM10 21h4"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v11m0 0l4.5-4.5M12 15l-4.5-4.5M4 20h16"/></symbol>
+  <symbol id="i-print" viewBox="0 0 24 24"><path d="M7 9V3.5h10V9M7 18H4.5v-7a2 2 0 012-2h11a2 2 0 012 2v7H17M7 14.5h10V21H7z"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.5v5.5M12 16v.5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M3.5 10h17M8.5 3v4M15.5 3v4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 6.5l5.5 5.5L13 17.5"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M5 17l5-6 4 3.5L19 7"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.7 9.5a2.4 2.4 0 114 1.8c-.9.7-1.7 1.2-1.7 2.2M12 16.5v.5"/></symbol>
+  <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="18.5" cy="12" r="1.3"/></symbol>
+</svg>
+
+<div class="app">
+
+  <!-- ===================== MENU DE GAUCHE ============================== -->
+  <aside class="sidebar" id="menu">
+    <div class="brand">
+      <span class="brand-mark"><svg class="ic"><use href="#i-box"/></svg></span>
+      <div>
+        <b id="nomEntreprise">stokio<i>.</i></b>
+        <small id="sousTitre">GESTION DE STOCK</small>
+      </div>
+      <button class="btn-close-menu" onclick="basculerMenu(false)" aria-label="Fermer"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+
+    <div class="workspace">
+      <span id="initialesEspace">S</span>
+      <div>
+        <strong>Mon espace</strong>
+        <em id="nomEspace">Inventaire principal</em>
+      </div>
+    </div>
+
+    <div class="nav-title">ESPACE DE TRAVAIL</div>
+    <nav class="side-nav" id="navigation"><!-- rempli par app.js --></nav>
+
+    <div class="side-bottom">
+      <div class="side-card">
+        <b>Votre inventaire,<br>toujours à jour.</b>
+        <p>Exportez vos données au format Excel (CSV) quand vous le souhaitez.</p>
+        <button onclick="exporterCSV()">Exporter les données <svg class="ic ic-sm"><use href="#i-arrow"/></svg></button>
+        <a id="telechargerAutonome" class="lien-autonome" href="./api/download" download="dashboard-autonome.html">Télécharger la version hors ligne <svg class="ic ic-sm"><use href="#i-down"/></svg></a>
+      </div>
+      <div class="side-user">
+        <span class="pastille" id="initialesAdmin">AD</span>
+        <div style="flex:1;min-width:0">
+          <strong id="nomAdmin">Administrateur</strong>
+          <em id="roleAdmin">Gestionnaire de stock</em>
+        </div>
+        <svg class="ic ic-sm"><use href="#i-dots"/></svg>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <!-- ===================== BARRE DU HAUT ============================= -->
+    <header class="topbar">
+      <div class="fil">
+        <button class="icon-btn btn-open-menu" onclick="basculerMenu(true)" aria-label="Menu"><svg class="ic"><use href="#i-menu"/></svg></button>
+        <span>Espace de travail</span> ›
+        <b id="filPage">Vue d'ensemble</b>
+      </div>
+      <div class="topbar-right">
+        <span class="top-date"><svg class="ic ic-sm"><use href="#i-calendar"/></svg> <span id="dateDuJour"></span></span>
+        <button class="icon-btn" id="cloche" onclick="voirAlertes()" title="Alertes de stock"><svg class="ic"><use href="#i-bell"/></svg></button>
+        <span class="top-user" id="initialesAdmin2">AD</span>
+      </div>
+    </header>
+
+    <main class="content">
+      <noscript><p class="notice-local">Activez JavaScript dans votre navigateur pour utiliser l’inventaire.</p></noscript>
+      <div class="notice-local" id="noticeLocale" hidden role="status">
+        <svg class="ic"><use href="#i-doc"/></svg>
+        <div><strong>Version locale · sans serveur</strong><p>Les modifications restent dans ce navigateur, sans synchronisation avec le site. Sauvegardez régulièrement vos données.</p></div>
+        <div class="outils-locaux">
+          <button class="btn btn-outline btn-sm" onclick="sauvegarderLocal()">Sauvegarder</button>
+          <button class="btn btn-outline btn-sm" onclick="document.getElementById('restaurerFichier').click()">Restaurer</button>
+        </div>
+        <input id="restaurerFichier" type="file" accept=".json,application/json" hidden aria-label="Restaurer une sauvegarde locale">
+      </div>
+      <div class="erreur-chargement" id="erreurChargement" hidden role="alert"></div>
+      <!-- ===================== TITRE DE PAGE =========================== -->
+      <div class="page-head">
+        <div>
+          <div class="eyebrow"><b></b> <span id="surTitre">GESTION D'INVENTAIRE</span></div>
+          <h1 id="titrePage">Vue d'ensemble<i>.</i></h1>
+          <p id="sousTitrePage">Gardez un œil sur votre stock, en toute simplicité.</p>
+        </div>
+        <div class="head-actions">
+          <button class="btn btn-outline" onclick="window.print()"><svg class="ic ic-sm"><use href="#i-print"/></svg> Imprimer</button>
+          <button class="btn btn-outline" onclick="exporterCSV()"><svg class="ic ic-sm"><use href="#i-down"/></svg> Exporter</button>
+          <button class="btn btn-primary" onclick="ouvrirFormulaireProduit()"><svg class="ic ic-sm"><use href="#i-plus"/></svg> Ajouter un produit</button>
+          <button class="btn btn-outline btn-vider" id="btnVider" onclick="ouvrirVidage()"></button>
+        </div>
+      </div>
+
+      <!-- ===================== PAGE 1 : VUE D'ENSEMBLE ================= -->
+      <section data-page="dashboard">
+        <div class="accueil-vide" id="accueilVide" hidden>
+          <span class="box"><svg class="ic"><use href="#i-box"/></svg></span>
+          <strong>Votre inventaire est vide</strong>
+          <p>Ajoutez vos premiers produits, puis enregistrez les entrées et les sorties avec leur date. Tout est calculé automatiquement.</p>
+          <button class="btn btn-primary" onclick="ouvrirFormulaireProduit()"><svg class="ic ic-sm"><use href="#i-plus"/></svg> Ajouter mon premier produit</button>
+        </div>
+        <div class="stats" id="statsDashboard"></div>
+
+        <div class="grille-2">
+          <div class="panel">
+            <div class="panel-head">
+              <div><h2>Activité du stock</h2><p id="legendeJours">Entrées et sorties des 7 derniers jours</p></div>
+              <div class="legende">
+                <span><i style="background:var(--entree)"></i> Entrées</span>
+                <span><i style="background:#f0bc91"></i> Sorties</span>
+              </div>
+            </div>
+            <div class="graph">
+              <div class="graph-y" id="graphY"></div>
+              <div class="graph-zone">
+                <div class="graph-lignes"><i></i><i></i><i></i><i></i><i></i></div>
+                <div class="graph-barres" id="graphBarres"></div>
+                <p class="graph-note" id="graphNote" hidden>Aucun mouvement sur cette période.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><div><h2>Activité récente</h2><p>Derniers mouvements enregistrés</p></div></div>
+            <div class="activite" id="activiteRecente"></div>
+            <button class="lien-bas" onclick="allerA('mouvements')">Voir tous les mouvements <svg class="ic ic-sm"><use href="#i-arrow"/></svg></button>
+          </div>
+        </div>
+
+        <div class="panel" id="apercuPanel">
+          <div class="panel-head">
+            <div><h2>Aperçu de l'inventaire</h2><p>Vos références les plus récentes</p></div>
+            <button class="btn btn-outline btn-sm" onclick="allerA('produits')">Voir tous les produits</button>
+          </div>
+          <div class="scroll-x"><table id="tableApercu"></table></div>
+        </div>
+      </section>
+
+      <!-- ===================== PAGE 2 : PRODUITS ======================= -->
+      <section data-page="produits" hidden>
+        <div class="panel">
+          <div class="panel-head">
+            <div><h2>Ajouter un produit</h2><p>Remplissez la ligne ci-dessous puis cliquez sur « Ajouter ».</p></div>
+          </div>
+          <form class="rapide rapide-produit" id="formProduitRapide">
+            <div class="champ"><label>Désignation</label><input name="name" placeholder="Ex. Pinncle de 5" required maxlength="120"></div>
+            <div class="champ"><label>Prix unitaire</label><input name="price" type="number" min="0" step="1" placeholder="0" required></div>
+            <div class="champ"><label>Stock minimum</label><input name="minStock" type="number" min="0" step="1" value="5" required></div>
+            <div class="champ"><label>Stock initial</label><input name="initialStock" type="number" min="0" step="1" value="0" required></div>
+            <div class="champ champ-bouton"><button class="btn btn-primary" type="submit"><svg class="ic ic-sm"><use href="#i-plus"/></svg> Ajouter</button></div>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div><h2>Tous les produits <span class="pill" id="compteProduits">0</span></h2><p>Cliquez sur une valeur du tableau pour la modifier.</p></div>
+            <button class="btn btn-entree btn-sm" onclick="ouvrirFormulaireMouvement('entry')"><svg class="ic ic-sm"><use href="#i-in"/></svg> Enregistrer un mouvement</button>
+          </div>
+          <div class="filtres">
+            <label class="search"><svg class="ic ic-sm"><use href="#i-search"/></svg><input id="rechercheProduits" placeholder="Rechercher un produit ou une référence..."></label>
+            <div class="onglets" id="filtresProduits">
+              <button class="active" data-filtre="tous">Tous</button>
+              <button data-filtre="stock">En stock</button>
+              <button data-filtre="bas">Stock faible</button>
+            </div>
+          </div>
+          <div class="scroll-x"><table id="tableProduits"></table></div>
+          <div class="aide-modif"><svg class="ic ic-sm"><use href="#i-pencil"/></svg> Astuce : cliquez sur une désignation, un prix ou un stock pour le corriger, puis appuyez sur Entrée.</div>
+          <div class="panel-foot" id="piedProduits"></div>
+        </div>
+      </section>
+
+      <!-- ===================== PAGE 3 : MOUVEMENTS ===================== -->
+      <section data-page="mouvements" hidden>
+        <div class="stats" id="statsMouvements"></div>
+
+        <div class="panel">
+          <div class="panel-head"><div><h2>Enregistrer une entrée ou une sortie</h2><p>La date du jour est pré-remplie, vous pouvez la changer.</p></div></div>
+          <form class="rapide rapide-mouvement" id="formMouvementRapide">
+            <div class="champ"><label>Produit</label><select name="productId" required><option value="">Sélectionner…</option></select></div>
+            <div class="champ"><label>Type</label><select name="type"><option value="entry">Entrée</option><option value="exit">Sortie</option></select></div>
+            <div class="champ"><label>Quantité</label><input name="quantity" type="number" min="1" step="1" placeholder="0" required></div>
+            <div class="champ"><label>Date</label><input name="date" type="date" required></div>
+            <div class="champ"><label>Note (facultatif)</label><input name="note" maxlength="300" placeholder="Ex. Réception commande"></div>
+            <div class="champ champ-bouton"><button class="btn btn-primary" type="submit"><svg class="ic ic-sm"><use href="#i-check"/></svg> Enregistrer</button></div>
+          </form>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head">
+            <div><h2>Historique des mouvements <span class="pill" id="compteMouvements">0</span></h2><p id="sousTitreMouvements">Toutes les opérations enregistrées.</p></div>
+          </div>
+          <div class="filtres">
+            <label class="search"><svg class="ic ic-sm"><use href="#i-search"/></svg><input id="rechercheMouvements" placeholder="Rechercher un mouvement..."></label>
+            <div class="onglets" id="periodesMouvements">
+              <button class="active" data-periode="jour">Aujourd&rsquo;hui</button>
+              <button data-periode="semaine">7 jours</button>
+              <button data-periode="mois">30 jours</button>
+              <button data-periode="tout">Tout</button>
+            </div>
+            <div class="onglets" id="filtresMouvements">
+              <button class="active" data-filtre="tous">Tous</button>
+              <button data-filtre="entry">Entrées</button>
+              <button data-filtre="exit">Sorties</button>
+            </div>
+          </div>
+          <div class="scroll-x"><table id="tableMouvements"></table></div>
+          <div class="panel-foot" id="piedMouvements"></div>
+        </div>
+      </section>
+
+      <!-- ===================== PAGE 4 : RÉCAPITULATIF ================== -->
+      <section data-page="recap" hidden>
+        <div class="recap-note">
+          <span class="box"><svg class="ic"><use href="#i-doc"/></svg></span>
+          <div>
+            <strong>Récapitulatif complet de l'inventaire</strong>
+            <p>Les mêmes colonnes que votre fichier Excel, calculées automatiquement.</p>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="window.print()"><svg class="ic ic-sm"><use href="#i-print"/></svg> Imprimer</button>
+          <button class="btn btn-primary btn-sm" onclick="exporterCSV()"><svg class="ic ic-sm"><use href="#i-down"/></svg> Exporter en CSV</button>
+        </div>
+
+        <div class="stats" id="statsRecap"></div>
+
+        <div class="panel">
+          <div class="panel-head"><div><h2>Inventaire du stock avec alerte du stock minimum</h2><p>Total général affiché en bas du tableau.</p></div></div>
+          <div class="scroll-x"><table class="recap-table" id="tableRecap"></table></div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-head"><div><h2>Produits à réapprovisionner</h2><p>Stock inférieur ou égal au stock minimum.</p></div></div>
+          <div class="scroll-x"><table id="tableAlertes"></table></div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span>© <span id="annee"></span> <span id="nomPied">stokio</span> — Inventaire en toute clarté.</span>
+        <span><span id="etatStockage">Chargement de l’inventaire…</span> <span class="point"></span></span>
+      </footer>
+    </main>
+  </div>
+</div>
+
+<!-- ======================= FENÊTRES ==================================== -->
+<div class="fond-modal" id="modalProduit" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-ic"><svg class="ic"><use href="#i-box"/></svg></span>
+      <button class="icon-btn" onclick="fermerModal('modalProduit')"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+    <h2 id="titreModalProduit">Ajouter un produit</h2>
+    <p class="sous">Renseignez les informations de la référence.</p>
+    <form id="formProduit">
+      <input type="hidden" name="id">
+      <div class="champ"><label>Désignation *</label><input name="name" required maxlength="120" placeholder="Ex. Pinncle de 5"></div>
+      <div class="duo">
+        <div class="champ"><label>Prix unitaire *</label><input name="price" type="number" min="0" step="1" required></div>
+        <div class="champ"><label>Stock minimum *</label><input name="minStock" type="number" min="0" step="1" required></div>
+      </div>
+      <div class="champ"><label>Stock initial *</label><input name="initialStock" type="number" min="0" step="1" required></div>
+      <div class="modal-foot">
+        <button class="btn btn-outline" type="button" onclick="fermerModal('modalProduit')">Annuler</button>
+        <button class="btn btn-primary" type="submit">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="fond-modal" id="modalMouvement" hidden>
+  <div class="modal">
+    <div class="modal-head">
+      <span class="modal-ic"><svg class="ic"><use href="#i-activity"/></svg></span>
+      <button class="icon-btn" onclick="fermerModal('modalMouvement')"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+    <h2>Nouveau mouvement</h2>
+    <p class="sous">Enregistrez une entrée ou une sortie de stock.</p>
+    <form id="formMouvement">
+      <div class="choix-type">
+        <button type="button" class="on-e" data-type="entry"><svg class="ic ic-sm"><use href="#i-in"/></svg> Entrée</button>
+        <button type="button" data-type="exit"><svg class="ic ic-sm"><use href="#i-out"/></svg> Sortie</button>
+      </div>
+      <input type="hidden" name="type" value="entry">
+      <div class="champ"><label>Produit *</label><select name="productId" required><option value="">Sélectionner…</option></select></div>
+      <div class="duo">
+        <div class="champ"><label>Quantité *</label><input name="quantity" type="number" min="1" step="1" required></div>
+        <div class="champ"><label>Date *</label><input name="date" type="date" required></div>
+      </div>
+      <div class="champ"><label>Note (facultatif)</label><input name="note" maxlength="300"></div>
+      <div class="modal-foot">
+        <button class="btn btn-outline" type="button" onclick="fermerModal('modalMouvement')">Annuler</button>
+        <button class="btn btn-primary" type="submit">Enregistrer</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="fond-modal" id="modalSuppression" hidden>
+  <div class="modal" style="max-width:410px">
+    <div class="modal-head">
+      <span class="modal-ic sup"><svg class="ic"><use href="#i-trash"/></svg></span>
+      <button class="icon-btn" onclick="fermerModal('modalSuppression')"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+    <h2>Confirmer la suppression</h2>
+    <p class="sous" id="texteSuppression"></p>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="fermerModal('modalSuppression')">Annuler</button>
+      <button class="btn btn-danger" id="btnConfirmerSuppression">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<!-- Conservez ces fichiers à côté de dashboard.html, ou utilisez dashboard-autonome.html. -->
+<div class="fond-modal" id="modalVidage" hidden>
+  <div class="modal" style="max-width:430px">
+    <div class="modal-head">
+      <span class="modal-ic sup"><svg class="ic"><use href="#i-alert"/></svg></span>
+      <button class="icon-btn" onclick="fermerModal('modalVidage')"><svg class="ic"><use href="#i-x"/></svg></button>
+    </div>
+    <h2>Vider tout l&rsquo;inventaire</h2>
+    <p class="sous" id="texteVidage"></p>
+    <form id="formVidage">
+      <div class="champ"><label>Saisissez <b>VIDER</b> pour confirmer *</label><input name="confirmation" autocomplete="off" spellcheck="false" placeholder="VIDER" required></div>
+      <div class="modal-foot">
+        <button class="btn btn-outline" type="button" onclick="fermerModal('modalVidage')">Annuler</button>
+        <button class="btn btn-danger" type="submit" id="btnConfirmerVidage" disabled>Vider l&rsquo;inventaire</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="./config.js"></script>
+<script src="./local-inventory.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>
